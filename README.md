@@ -1,3 +1,5 @@
+# Plant Disease Classification using CNN-Extracted Features and KNN
+
 ![GitHub top language](https://img.shields.io/github/languages/top/omar-El-Baz/plant-disease-classification?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/omar-El-Baz/plant-disease-classification?style=flat-square)
 
@@ -5,9 +7,22 @@ A machine learning project that demonstrates a hybrid approach to classifying pl
 
 **Dataset:** [PlantVillage Dataset on Kaggle](https://www.kaggle.com/datasets/emmarex/plantdisease) (15 classes, 20,638 images)
 
-## 📋 Project Summary
+## 🎯 Project Context & Objective
 
-The core challenge was to adapt the simple but effective KNN algorithm, which struggles with high-dimensional raw image data. This was solved by creating a robust feature engineering pipeline:
+This project was developed to fulfill a university course requirement with a specific and challenging constraint: to utilize the K-Nearest Neighbors (KNN) algorithm for classification.
+
+**Original Assignment Prompt:**
+> "Use KNN to classify plant diseases based on leaf images or other features such as
+temperature, humidity, and soil conditions.You have a plant leafs images or
+environmental features, train a KNN model to classify plant diseases based on
+input features. This can assist in agricultural settings where diagnosing plant
+health quickly is crucial for preventing crop damage."
+
+Recognizing that KNN is traditionally ill-suited for the high-dimensionality of raw image data, our team's primary engineering challenge was to design a sophisticated feature extraction and dimensionality reduction pipeline to make the KNN classifier effective. This project showcases a solution that works robustly within the given constraints.
+
+## 📋 Technical Summary
+
+Our solution transforms raw image data into a low-dimensional, feature-rich format ideal for KNN classification through the following pipeline:
 
 1.  **Feature Extraction:** A pre-trained **MobileNetV2** (without its top classification layer) was used to convert each 224x224 leaf image into a semantically rich 1280-dimensional feature vector.
 2.  **Dimensionality Reduction:** **Principal Component Analysis (PCA)** was applied to the extracted features, reducing the dimensionality to 787 components while retaining ~95% of the variance. This improves KNN's efficiency and reduces noise.
@@ -26,12 +41,11 @@ The core challenge was to adapt the simple but effective KNN algorithm, which st
 ## 🛠️ How to Run This Project
 
 ### 1. Prerequisites
-
 - Python 3.8+
 - An environment manager like `venv` or `conda`.
 - [Git](https://git-scm.com/)
 
-### 2. Setup & Installation
+### 2. Setup and Installation
 
 **Clone the repository:**
 ```bash
