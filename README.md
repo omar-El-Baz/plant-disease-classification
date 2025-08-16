@@ -1,93 +1,89 @@
-# Plant Disease Classification using KNN and CNN Features
+![GitHub top language](https://img.shields.io/github/languages/top/omar-El-Baz/plant-disease-classification?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/omar-El-Baz/plant-disease-classification?style=flat-square)
 
-This project implements a system for classifying plant diseases from leaf images. It utilizes a K-Nearest Neighbors (KNN) classifier trained on features extracted by a pre-trained MobileNetV2 Convolutional Neural Network (CNN) and further refined by Principal Component Analysis (PCA).
+A machine learning project that demonstrates a hybrid approach to classifying plant diseases from leaf images. This system achieves **88.57% test accuracy** on the PlantVillage dataset by leveraging a pre-trained Convolutional Neural Network (MobileNetV2) for powerful feature extraction, followed by PCA for dimensionality reduction, and a K-Nearest Neighbors (KNN) classifier for the final prediction.
 
+**Dataset:** [PlantVillage Dataset on Kaggle](https://www.kaggle.com/datasets/emmarex/plantdisease) (15 classes, 20,638 images)
 
-**Dataset:** [PlantVillage Dataset on Kaggle](https://www.kaggle.com/datasets/emmarex/plantdisease)
+## 📋 Project Summary
 
-## Project Overview
+The core challenge was to adapt the simple but effective KNN algorithm, which struggles with high-dimensional raw image data. This was solved by creating a robust feature engineering pipeline:
 
-The primary goal is to accurately identify plant diseases based on leaf imagery to assist in agricultural settings. The system involves:
-1.  **Feature Extraction:** Using a pre-trained MobileNetV2 to convert images into meaningful numerical feature vectors.
-2.  **Dimensionality Reduction:** Applying PCA to the extracted features to reduce complexity and noise.
-3.  **Classification:** Training a KNN model on the processed features.
-4.  **Prediction:** A Python script (`app.py`) to predict diseases on new images using the trained models.
+1.  **Feature Extraction:** A pre-trained **MobileNetV2** (without its top classification layer) was used to convert each 224x224 leaf image into a semantically rich 1280-dimensional feature vector.
+2.  **Dimensionality Reduction:** **Principal Component Analysis (PCA)** was applied to the extracted features, reducing the dimensionality to 787 components while retaining ~95% of the variance. This improves KNN's efficiency and reduces noise.
+3.  **Classification & Optimization:** A **K-Nearest Neighbors (KNN)** model was trained on these refined features. **GridSearchCV** was used to systematically find the optimal hyperparameters (`metric='cosine'`, `n_neighbors=7`, `weights='distance'`).
+4.  **Prediction Pipeline:** A standalone Python script (`app.py`) demonstrates the end-to-end prediction process, loading the trained models to classify new, unseen images.
 
-The main training and evaluation pipeline is detailed in the Jupyter Notebook: `model_training.ipynb`.
+## 🚀 Key Results
 
+| Metric                      | Value         |
+| --------------------------- | ------------- |
+| **Test Set Accuracy**       | **88.57%**    |
+| Cross-Validation Accuracy   | 87.97%        |
+| Optimal PCA Components      | 787           |
+| Variance Explained by PCA   | 94.88%        |
 
-## Setup and Installation
+## 🛠️ How to Run This Project
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/omar-El-Baz/plant-disease-classification.git
-    cd plant-disease-classification
-    ```
+### 1. Prerequisites
 
-2.  **Create a Python Environment (Recommended):**
-    It's good practice to use a virtual environment.
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-    ```
+- Python 3.8+
+- An environment manager like `venv` or `conda`.
+- [Git](https://git-scm.com/)
 
-3.  **Install Dependencies:**
-    You will need Python 3.x and the following major libraries. You can install them using pip:
-    ```bash
-    pip install numpy pandas matplotlib seaborn scikit-learn tensorflow opencv-python Pillow
-    ```
-    (Alternatively, if you create a `requirements.txt` file, users can run `pip install -r requirements.txt`)
+### 2. Setup & Installation
 
-4.  **Download the Dataset:**
-    *   Go to [https://www.kaggle.com/datasets/emmarex/plantdisease](https://www.kaggle.com/datasets/emmarex/plantdisease).
-    *   Download the dataset.
-    *   Extract the contents and ensure you have a folder named `PlantVillage` containing subfolders for each class (e.g., `Pepper__bell___Bacterial_spot`, `Tomato___healthy`).
-    *   Place the `PlantVillage` folder inside a `data` directory at the root of this project. The path used in the notebook is relative, e.g., `../data/PlantVillage` or `data/PlantVillage` depending on your notebook's specific path setup. Adjust the `dataset_path` variable in the notebook (`[Your_Notebook_Name].ipynb`) if your structure differs. **The notebook OCR shows `dataset_path = r"../data//PlantVillage"`, implying the notebook might be in a subdirectory and `data` is one level up.** Please ensure this matches your setup.
+**Clone the repository:**
+```bash
+git clone https://github.com/omar-El-Baz/plant-disease-classification.git
+cd plant-disease-classification
+```
 
-## Running the Project
+**Create and activate a virtual environment**
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+```
+**Install the required dependencies**
+```bash
+pip install -r requirements.txt
+```
 
-### 1. Training the Model (Jupyter Notebook)
+## Download the dataset
+1. Download the "PlantVillage" dataset from the Kaggle link above.
+2. Create a directory named data at the root of the project.
+3. Extract the downloaded archive and place the PlantVillage folder inside the data directory. The final path should look like this: ./data/PlantVillage/.
 
-1.  Ensure your Python environment is activated and all dependencies are installed.
-2.  Make sure the PlantVillage dataset is correctly placed in the `data/PlantVillage/` directory relative to the notebook's expectations.
-3.  Open and run the `[Your_Notebook_Name].ipynb` Jupyter Notebook. This will:
-    *   Load and preprocess the data.
-    *   Extract features using MobileNetV2.
-    *   Apply PCA.
-    *   Train and tune the KNN model using GridSearchCV.
-    *   Evaluate the model and display results (accuracy, classification report, confusion matrix).
-    *   Save the `label_encoder.pkl`, `scaler.pkl`, `pca_model.pkl`, and `best_knn_model.pkl` files into the `models/` directory (the notebook OCR shows saving to `../models/`, ensure this directory exists or is created, and that `app.py` loads from the correct relative path).
+## 3. Running the Pipeline
 
-    **Note:** The feature extraction and model training steps can be time-consuming.
+### Step 1 — Train the Model
+1. Open and run all cells in the `model_training.ipynb` Jupyter Notebook.
+2. This will perform all data processing and save the trained model files (`.pkl`) into the `models/` directory.
 
-### 2. Making Predictions (app.py)
+### Step 2 — Make a Prediction
+Run the prediction script from your terminal to classify a sample image:
+```bash
+python app.py
+```
+**Note:** You can modify the `image_path` variable in `app.py` to test your own images.
 
-1.  Once the notebook has been run and the `.pkl` model files are saved in the `models/` directory.
-2.  You can run the `app.py` script to predict the disease of a sample image.
-3.  Modify the `test_image` variable in the `if __name__ == "__main__":` block of `app.py` to point to an image you want to classify. The current example path is:
-    `test_image = "data/PlantVillage/Pepper__bell___Bacterial_spot/f92689ca-b5db-4a0a-b865-a69ba215922f___JR_B.Spot 9040.JPG"`
-    Ensure this path is valid relative to where you run `app.py`.
-4.  Run the script from your terminal:
-    ```bash
-    python3 app.py
-    ```
-    Output will show the loaded models and the predicted disease for the test image.
+```text
+Project Root
+├── data/                     # Dataset directory
+│   └── PlantVillage/         # <-- Place dataset here
+├── models/                   # Saved model files
+│   ├── best_knn_model.pkl
+│   ├── label_encoder.pkl
+│   ├── pca_model.pkl
+│   └── scaler.pkl
+├── notebooks/                # Jupyter notebooks
+│   └── model_training.ipynb  # Main notebook for training & evaluation
+├── app.py                    # Script for making predictions
+├── requirements.txt          # Project dependencies
+└── README.md                 # Project documentation
+```
 
-## Results Summary
-
-*   **CNN Feature Extractor:** MobileNetV2
-*   **Dimensionality Reduction:** PCA (787 components, ~94.88% variance explained)
-*   **Classifier:** K-Nearest Neighbors
-*   **Best KNN Hyperparameters:** `{'metric': 'cosine', 'n_neighbors': 7, 'weights': 'distance'}`
-*   **Cross-Validation Accuracy:** ~0.8797
-*   **Test Set Accuracy:** ~0.8857
-
-Detailed per-class metrics and confusion matrix can be found in the output of the Jupyter Notebook.
-
-## Potential Future Work
-
-*   Implement data augmentation techniques.
-*   Explore advanced methods for handling class imbalance (e.g., SMOTE).
-*   Experiment with other classifiers (SVM, Random Forest) or fine-tune the CNN.
-*   Integrate environmental features if such data becomes available.
-*   Develop a web application interface for easier use.
+## 👥 Team Members
+- **Moataz Ahmed Samir**
+- **Malak Gehad**
+- **Omar El-Sayed**
